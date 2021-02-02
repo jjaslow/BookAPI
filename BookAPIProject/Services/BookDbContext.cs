@@ -12,7 +12,7 @@ namespace BookAPIProject.Services
         public BookDbContext(DbContextOptions<BookDbContext> options)
             : base(options)
         {
-            Database.Migrate();
+            Database.Migrate();  //use migrations for our DB (to add, remove, edit tables in code)
         }
 
 

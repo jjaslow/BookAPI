@@ -25,7 +25,7 @@ namespace BookAPIProject.Models
 
 
         //1:many
-        public virtual Country  Country { get; set; }
+        public virtual Country Country { get; set; }
 
 
         //many:many

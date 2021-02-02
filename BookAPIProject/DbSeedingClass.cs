@@ -154,7 +154,7 @@ namespace BookAPIProject
                 }
             };
 
-            context.BookAuthors.AddRange(booksAuthors);
+            context.BookAuthors.AddRange(booksAuthors); //we have started from BookAuthors table
             context.SaveChanges();
         }
 
