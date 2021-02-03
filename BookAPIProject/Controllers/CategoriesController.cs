@@ -94,7 +94,7 @@ namespace BookAPIProject.Controllers
         [HttpGet("{categoryId}/books")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<BooksDto>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BookDto>))]
         public IActionResult GetBooksForCategory(int categoryId)
         {
             //TODO:: validate that book exists
@@ -108,9 +108,9 @@ namespace BookAPIProject.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var booksDto = new List<BooksDto>();
+            var booksDto = new List<BookDto>();
             foreach (var book in books)
-                booksDto.Add(new BooksDto { Id = book.ID, Isbn = book.Isbn, Title = book.Title, DatePublished = book.DatePublished });
+                booksDto.Add(new BookDto { Id = book.ID, Isbn = book.Isbn, Title = book.Title, DatePublished = book.DatePublished });
 
             return Ok(booksDto);
         }

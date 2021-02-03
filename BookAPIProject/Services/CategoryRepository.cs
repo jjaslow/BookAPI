@@ -29,12 +29,12 @@ namespace BookAPIProject.Services
 
         public ICollection<Category> GetCategoriesOfABook(int bookId)
         {
-            return (ICollection<Category>)_categoryContext.BookCategories.Where(b => b.BookId == bookId).Select(c=>c.Category).ToList();
+            return _categoryContext.BookCategories.Where(b => b.BookId == bookId).Select(c=>c.Category).ToList();
         }
 
         public ICollection<Book> GetBooksForCategory(int categoryId)
         {
-            return (ICollection<Book>)_categoryContext.BookCategories.Where(c => c.CategoryId == categoryId).Select(b => b.Book).ToList();
+            return _categoryContext.BookCategories.Where(c => c.CategoryId == categoryId).Select(b => b.Book).ToList();
         }
 
         public bool CategoryExists(int categoryId)
