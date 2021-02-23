@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BookAPIProject.Services
 {
-    interface IReviewRepository
+    public interface IReviewRepository
     {
         ICollection<Review> GetReviews();
         Review GetReview(int reviewId);

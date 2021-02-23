@@ -30,10 +30,13 @@ namespace BookAPIProject
             services.AddMvc();
 
             var connectionString = Configuration["ConnectionStrings:bookDbConnectionString"];
+
             services.AddDbContext<BookDbContext>(c => c.UseSqlServer(connectionString));
 
             services.AddScoped<ICountryRepository, CountryRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IReviewerRepository, ReviewerRepository>();
+            services.AddScoped<IReviewRepository, ReviewRepository>();
         }
 
 

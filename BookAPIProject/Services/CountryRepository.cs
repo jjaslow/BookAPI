@@ -29,14 +29,12 @@ namespace BookAPIProject.Services
 
         public Country GetCountryOfAnAuthor(int authorId)
         {
-            //return _countryContext.Authors.FirstOrDefault(a => a.Id == authorId)?.Country;
             return _countryContext.Authors.Where(a => a.Id == authorId).Select(c => c.Country).FirstOrDefault();
         }
 
         public ICollection<Author> GetAuthorsFromACountry(int countryId)
         {
-            return (ICollection<Author>)_countryContext.Countries.Where(c => c.Id == countryId).Select(a => a.Authors).ToList();
-            //return _countryContext.Authors.Where(c => c.Country.Id == countryId).ToList();
+            return _countryContext.Authors.Where(c => c.Id == countryId).ToList();
         }
 
         public bool CountryExists(int countryId)

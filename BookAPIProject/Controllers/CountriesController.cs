@@ -13,10 +13,12 @@ namespace BookAPIProject.Controllers
     public class CountriesController : Controller
     {
         ICountryRepository _countryRepository;
+        IAuthorRepositiory _authorRepositiory;
 
-        public CountriesController(ICountryRepository countryRepository)
+        public CountriesController(ICountryRepository countryRepository, IAuthorRepositiory authorRepositiory)
         {
             _countryRepository = countryRepository;
+            _authorRepositiory = authorRepositiory;
         }
 
 
@@ -70,13 +72,15 @@ namespace BookAPIProject.Controllers
         [ProducesResponseType(200, Type = typeof(CountryDto))]
         public IActionResult GetCountryOfAnAnthor(int authorId)
         {
-            //TODO:: validate that author exists
+            //TODO:: validate that author exists...test
+            if (!_authorRepositiory.AuthorExists(authorId))
+                return NotFound();
 
             var country = _countryRepository.GetCountryOfAnAuthor(authorId);
 
             //wont need after we validate author exists
-            if (country == null)
-                return NotFound();
+            //if (country == null)
+            //    return NotFound();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -88,7 +92,37 @@ namespace BookAPIProject.Controllers
 
 
 
+        //Uri: api/countries/{countryId}/authors
+        //dont need to manually enter the leading slash. It knows
+        [HttpGet("{countryId}/authors")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<AuthorDto>))]
+        public IActionResult GetAuthorsFromACountry(int countryId)
+        {
+            if(!_countryRepository.CountryExists(countryId))
+                return NotFound();
+
+            var authors = _countryRepository.GetAuthorsFromACountry(countryId);
+
+            //wont need after we validate country exists
+            //if (authors.ToList().Count == 0)
+            //    return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var authorsDto = new List<AuthorDto>();
+            foreach (var author in authors)
+                authorsDto.Add(new AuthorDto { Id = author.Id, FirstName = author.FirstName, LastName = author.LastName });
+
+
+            return Ok(authorsDto);
+        }
+
     }
 
 
 }
+
+

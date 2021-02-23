@@ -13,10 +13,12 @@ namespace BookAPIProject.Controllers
     public class CategoriesController : Controller
     {
         ICategoryRepository _categoryRepository;
+        IBookRepository _bookRepository;
 
-        public CategoriesController(ICategoryRepository categoryRepository)
+        public CategoriesController(ICategoryRepository categoryRepository, IBookRepository bookRepository)
         {
             _categoryRepository = categoryRepository;
+            _bookRepository = bookRepository;
         }
 
 
@@ -70,13 +72,15 @@ namespace BookAPIProject.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<CategoryDto>))]
         public IActionResult GetCategoriesOfABook(int bookId)
         {
-            //TODO:: validate that book exists
+            //TODO:: validate that book exists...TEST
+            if (!_bookRepository.BookExists(bookId))
+                return NotFound();
 
             var categories = _categoryRepository.GetCategoriesOfABook(bookId);
 
             //wont need after we validate author exists
-            if (categories.ToList().Count == 0)
-                return NotFound();
+            //if (categories.ToList().Count == 0)
+            //    return NotFound();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -89,7 +93,7 @@ namespace BookAPIProject.Controllers
         }
 
 
-        //Uri: api/categories/books/{categoryId}
+        //Uri: api/categories/{categoryId}/books
         //dont need to manually enter the leading slash. It knows
         [HttpGet("{categoryId}/books")]
         [ProducesResponseType(400)]
@@ -97,13 +101,14 @@ namespace BookAPIProject.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<BookDto>))]
         public IActionResult GetBooksForCategory(int categoryId)
         {
-            //TODO:: validate that book exists
+            if (!_categoryRepository.CategoryExists(categoryId))
+                return NotFound();
 
             var books = _categoryRepository.GetBooksForCategory(categoryId);
 
-            //wont need after we validate author exists
-            if (books.Count == 0)
-                return NotFound();
+            //wont need after we validate category exists
+            //if (books.Count == 0)
+            //    return NotFound();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BookAPIProject.Services
 {
-    interface IBookRepository
+    public interface IBookRepository
     {
         ICollection<Book> GetBooks();
         Book GetBook(int bookId);
@@ -15,7 +15,7 @@ namespace BookAPIProject.Services
         bool BookExists(string Isbn);
 
 
-        bool IsDuplicateIsbn(string Isbn);
+        bool IsDuplicateIsbn(int bookId, string Isbn);
         decimal GetBookRating(int bookId);
 
     }

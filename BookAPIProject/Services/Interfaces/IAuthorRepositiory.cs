@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BookAPIProject.Services
 {
-    interface IAuthorRepositiory
+    public interface IAuthorRepositiory
     {
         ICollection<Author> GetAuthors();
         Author GetAuthor(int authorId);
