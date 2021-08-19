@@ -29,7 +29,7 @@ namespace BookAPIProject.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<CategoryDto>))]
         public IActionResult GetCategories()
         {
-            var categories = _categoryRepository.GetCategories().ToList();
+            var categories = _categoryRepository.GetCategories();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -72,7 +72,6 @@ namespace BookAPIProject.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<CategoryDto>))]
         public IActionResult GetCategoriesOfABook(int bookId)
         {
-            //TODO:: validate that book exists...TEST
             if (!_bookRepository.BookExists(bookId))
                 return NotFound();
 

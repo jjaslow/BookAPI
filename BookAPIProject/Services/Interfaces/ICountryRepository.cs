@@ -14,7 +14,16 @@ namespace BookAPIProject.Services
         ICollection<Author> GetAuthorsFromACountry(int countryId);
         bool CountryExists(int countryId);
 
+        bool IsDuplicateCountryName(int countryID, string countryName);
 
+
+
+
+        //return a bool from these methods to confirm if the operation was successful
+        bool CreateCountry(Country country);
+        bool UpdateCountry(Country country);
+        bool DeleteCountry(Country country);
+        bool Save();
     }
 
 }

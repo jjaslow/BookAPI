@@ -1,4 +1,5 @@
 ﻿using BookAPIProject.Dtos;
+using BookAPIProject.Models;
 using BookAPIProject.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -22,6 +23,7 @@ namespace BookAPIProject.Controllers
         }
 
 
+        ////////////////////////////////////////////
 
         //Uri: api/countries
         [HttpGet]
@@ -29,7 +31,7 @@ namespace BookAPIProject.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<CountryDto>))]
         public IActionResult GetCountries()
         {
-            var countries = _countryRepository.GetCountries().ToList();
+            var countries = _countryRepository.GetCountries();
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -44,7 +46,8 @@ namespace BookAPIProject.Controllers
 
         //Uri: api/countries/{countryId}
         //dont need to manually enter the leading slash. It knows
-        [HttpGet("{countryId}")]
+        //need to explecitly enter the attribute name of the method in the action for internal calling
+        [HttpGet("{countryId}", Name = "GetCountry")]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(CountryDto))]
@@ -72,7 +75,6 @@ namespace BookAPIProject.Controllers
         [ProducesResponseType(200, Type = typeof(CountryDto))]
         public IActionResult GetCountryOfAnAnthor(int authorId)
         {
-            //TODO:: validate that author exists...test
             if (!_authorRepositiory.AuthorExists(authorId))
                 return NotFound();
 
@@ -119,6 +121,138 @@ namespace BookAPIProject.Controllers
 
             return Ok(authorsDto);
         }
+
+
+
+
+        ////////////////////////////////////////////
+
+        //URI: //api/countries
+        [HttpPost]
+        [ProducesResponseType(201, Type = typeof(Country))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(422)]
+        [ProducesResponseType(500)]
+        public IActionResult CreateCountry([FromBody]Country countryToCreate)
+        {
+            //empty POST data
+            if (countryToCreate == null)
+                return BadRequest(ModelState);
+
+            //new countryToCreate Name already exists
+            if (_countryRepository.GetCountries()
+                .Any(c => c.Name.Trim().ToUpper() == countryToCreate.Name.Trim().ToUpper()))
+            {
+                ModelState.AddModelError("", $"Country {countryToCreate.Name} already exists");
+                return StatusCode(422, ModelState);
+            }
+
+            //General ModelState error
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            //actually perform the creation and check for errors
+            //error saving new country to db (ie SaveChanges int <0)
+            if(!_countryRepository.CreateCountry(countryToCreate))
+            {
+                ModelState.AddModelError("", $"Something went wrong saving {countryToCreate.Name}");
+                return StatusCode(500, ModelState);
+            }
+
+            //success (response code 201 - created)
+            //Then call back to the GetCountry call above to return the newly created country
+            //in doing so, we need to add the 'name' of the method to the HttpGet above (so it can be called by name internally)
+            return CreatedAtRoute("GetCountry", new { countryId = countryToCreate.Id}, countryToCreate);
+        }
+
+
+        //URI:  //api/countries/{countryId}
+        //we have the countryId twice in the arguments (one included in the Country), but do so to 2x check where we can confirm the Id in the Country object matches the int whic will be passed in the URL
+        [HttpPut("{countryId}")]
+        [ProducesResponseType(204)] //no content
+        [ProducesResponseType(400)] //bad request
+        [ProducesResponseType(404)] //not found
+        [ProducesResponseType(422)]
+        [ProducesResponseType(500)]
+        public IActionResult UpdateCountry(int countryId, [FromBody]Country updatedCountryInfo)
+        {
+            //empty PUT data
+            if (updatedCountryInfo == null)
+                return BadRequest(ModelState);
+
+            ////mis matched Ids
+            if (countryId != updatedCountryInfo.Id)
+                return BadRequest(ModelState);
+
+            ////ensure country ID actually exists
+            ///if (!_countryRepository.GetCountries().Any(c => c.Id == updatedCountryInfo.Id))
+            if (!_countryRepository.CountryExists(countryId))
+                return NotFound();
+
+            ////validate that we arent trying to update this country with a pre-existing name
+            if (_countryRepository.IsDuplicateCountryName(countryId, updatedCountryInfo.Name))
+            {
+                ModelState.AddModelError("", $"Country {updatedCountryInfo.Name} already exists");
+                return StatusCode(422, ModelState);
+            }
+
+            ////General ModelState error
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            //error saving new country to db (ie SaveChanges int <0)
+            if (!_countryRepository.UpdateCountry(updatedCountryInfo))
+            {
+                ModelState.AddModelError("", $"Something went wrong updating {updatedCountryInfo.Name}");
+                return StatusCode(500, ModelState);
+            }
+
+            //success 
+            //dont usually return anything on an update
+            return NoContent();
+
+        }
+
+
+        //URI:  //api/countries/{countryId}
+        [HttpDelete("{countryId}")]
+        [ProducesResponseType(204)] //no content
+        [ProducesResponseType(400)] //bad request
+        [ProducesResponseType(404)] //not found
+        [ProducesResponseType(409)] //conflict
+        [ProducesResponseType(500)]
+        public IActionResult DeleteCountry(int countryId)
+        {
+            ////ensure country ID actually exists
+            if (!_countryRepository.CountryExists(countryId))
+                return NotFound();
+
+            var countryToDelete = _countryRepository.GetCountry(countryId);
+
+            //need to check if any authors are using this country (cant delete a country being used by an author)
+            //if so, flag an error
+            if(_countryRepository.GetAuthorsFromACountry(countryId).Count>0)
+            {
+                ModelState.AddModelError("", $"Country {countryToDelete.Name} cannot be deleted because it is used by at least 1 author");
+                return StatusCode(409, ModelState);
+            }
+
+            ////General ModelState error
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            //error deleting
+            if(!_countryRepository.DeleteCountry(countryToDelete))
+            {
+                ModelState.AddModelError("", $"Something went wrong deleting {countryToDelete.Name}");
+                return StatusCode(500, ModelState);
+            }
+
+            //success 
+            //dont usually return anything on an update
+            return NoContent();
+        }
+
 
     }
 

@@ -16,6 +16,8 @@ namespace BookAPIProject.Services
         }
 
 
+        //////////////
+
 
         public ICollection<Country> GetCountries()
         {
@@ -41,5 +43,47 @@ namespace BookAPIProject.Services
         {
             return _countryContext.Countries.Any(c => c.Id == countryId);
         }
+
+        public bool IsDuplicateCountryName(int countryID, string countryName)
+        {
+            bool countryNameExists = _countryContext.Countries.Any(c => c.Name == countryName);
+            if (!countryNameExists)
+                return false;
+            else
+            {
+                Country existingCountry = _countryContext.Countries.FirstOrDefault(c => c.Name.Trim().ToUpper() == countryName.Trim().ToUpper());
+                return existingCountry.Id != countryID;
+            }
+        }
+
+
+
+        ////////
+
+
+        public bool CreateCountry(Country country)
+        {
+            _countryContext.Add(country);
+            return Save();
+        }
+
+        public bool UpdateCountry(Country country)
+        {
+            _countryContext.Update(country);
+            return Save();
+        }
+
+        public bool DeleteCountry(Country country)
+        {
+            _countryContext.Remove(country);
+            return Save();
+        }
+
+        public bool Save()
+        {
+            var saved = _countryContext.SaveChanges();
+            return saved >= 0;
+        }
+
     }
 }

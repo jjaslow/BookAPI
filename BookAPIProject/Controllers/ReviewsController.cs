@@ -13,13 +13,12 @@ namespace BookAPIProject.Controllers
     public class ReviewsController : Controller
     {
         IReviewRepository _reviewRepository;
-        //TODO:: add book interface
-        //IBookRepository _bookRepository;
+        IBookRepository _bookRepository;
 
-        public ReviewsController(IReviewRepository reviewRepo) //, IBookRepository bookRepo
+        public ReviewsController(IReviewRepository reviewRepo, IBookRepository bookRepo) //, 
         {
             _reviewRepository = reviewRepo;
-            //_bookRepository = bookRepo;
+            _bookRepository = bookRepo;
         }
 
 
@@ -72,9 +71,8 @@ namespace BookAPIProject.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<ReviewDto>))]
         public IActionResult GetReviewsOfABook(int bookId)
         {
-            //TODO:: Validate Book
-            //if(!_bookRepository.BookExists(bookId))
-            //    return NotFound();
+            if (!_bookRepository.BookExists(bookId))
+                return NotFound();
 
             var reviews = _reviewRepository.GetReviewsOfABook(bookId);
 

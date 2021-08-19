@@ -41,5 +41,17 @@ namespace BookAPIProject.Services
         {
             return _categoryContext.Categories.Any(c => c.Id == categoryId);
         }
+
+        public bool IsDuplicateCategoryName(int categoryId, string categoryName)
+        {
+            bool categoryNameExists = _categoryContext.Categories.Any(c => c.Name == categoryName);
+            if (!categoryNameExists)
+                return false;
+            else
+            {
+                Category existingCategory = _categoryContext.Categories.FirstOrDefault(c => c.Name.Trim().ToUpper() == categoryName.Trim().ToUpper());
+                return existingCategory.Id != categoryId;
+            }
+        }
     }
 }

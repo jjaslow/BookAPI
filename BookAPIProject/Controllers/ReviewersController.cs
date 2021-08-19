@@ -18,7 +18,6 @@ namespace BookAPIProject.Controllers
         public ReviewersController(IReviewerRepository reviewerRepository, IReviewRepository reviewRepository)
         {
             _reviewerRepository = reviewerRepository;
-            //TODO:: need to implement the reviewRepo before this will work.
             _reviewRepository = reviewRepository;
         }
 
