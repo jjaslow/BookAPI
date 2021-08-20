@@ -27,7 +27,7 @@ namespace BookAPIProject.Controllers
 
         //Uri: api/countries
         [HttpGet]
-        [ProducesResponseType(400)]
+        [ProducesResponseType(400)] //bad request
         [ProducesResponseType(200, Type = typeof(IEnumerable<CountryDto>))]
         public IActionResult GetCountries()
         {
@@ -48,8 +48,8 @@ namespace BookAPIProject.Controllers
         //dont need to manually enter the leading slash. It knows
         //need to explecitly enter the attribute name of the method in the action for internal calling
         [HttpGet("{countryId}", Name = "GetCountry")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(400)] //bad request
+        [ProducesResponseType(404)] //not found
         [ProducesResponseType(200, Type = typeof(CountryDto))]
         public IActionResult GetCountry(int countryId)
         {
@@ -70,8 +70,8 @@ namespace BookAPIProject.Controllers
         //Uri: api/countries/{countryId}
         //dont need to manually enter the leading slash. It knows
         [HttpGet("authors/{authorId}")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(400)] //bad request
+        [ProducesResponseType(404)] //not found
         [ProducesResponseType(200, Type = typeof(CountryDto))]
         public IActionResult GetCountryOfAnAnthor(int authorId)
         {
@@ -97,8 +97,8 @@ namespace BookAPIProject.Controllers
         //Uri: api/countries/{countryId}/authors
         //dont need to manually enter the leading slash. It knows
         [HttpGet("{countryId}/authors")]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(400)] //bad request
+        [ProducesResponseType(404)] //not found
         [ProducesResponseType(200, Type = typeof(IEnumerable<AuthorDto>))]
         public IActionResult GetAuthorsFromACountry(int countryId)
         {
@@ -129,10 +129,10 @@ namespace BookAPIProject.Controllers
 
         //URI: //api/countries
         [HttpPost]
-        [ProducesResponseType(201, Type = typeof(Country))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(422)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(201, Type = typeof(Country))] //Created
+        [ProducesResponseType(400)] //bad request
+        [ProducesResponseType(422)] //unprocessable
+        [ProducesResponseType(500)] //Server Error
         public IActionResult CreateCountry([FromBody]Country countryToCreate)
         {
             //empty POST data
@@ -161,7 +161,8 @@ namespace BookAPIProject.Controllers
 
             //success (response code 201 - created)
             //Then call back to the GetCountry call above to return the newly created country
-            //in doing so, we need to add the 'name' of the method to the HttpGet above (so it can be called by name internally)
+            //Since GetCategory has an argument, we need to pass that by creating an anonymous object with the same argument name.
+            //We also need to add the 'name' of the method to the HttpGet above (so it can be called by name internally). And finally, we pass the newly created object.
             return CreatedAtRoute("GetCountry", new { countryId = countryToCreate.Id}, countryToCreate);
         }
 
@@ -172,8 +173,8 @@ namespace BookAPIProject.Controllers
         [ProducesResponseType(204)] //no content
         [ProducesResponseType(400)] //bad request
         [ProducesResponseType(404)] //not found
-        [ProducesResponseType(422)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(422)] //unprocessable
+        [ProducesResponseType(500)] //Server Error
         public IActionResult UpdateCountry(int countryId, [FromBody]Country updatedCountryInfo)
         {
             //empty PUT data
@@ -220,7 +221,7 @@ namespace BookAPIProject.Controllers
         [ProducesResponseType(400)] //bad request
         [ProducesResponseType(404)] //not found
         [ProducesResponseType(409)] //conflict
-        [ProducesResponseType(500)]
+        [ProducesResponseType(500)] //Server Error
         public IActionResult DeleteCountry(int countryId)
         {
             ////ensure country ID actually exists

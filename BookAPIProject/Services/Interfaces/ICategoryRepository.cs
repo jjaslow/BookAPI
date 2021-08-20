@@ -16,5 +16,11 @@ namespace BookAPIProject.Services
 
         bool IsDuplicateCategoryName(int categoryId, string categoryName);
 
+
+        bool CreateCategory(Category newCategory);
+        bool UpdateCategory(Category categoryToUpdate);
+        bool DeleteCategory(Category categoryToRemove);
+        bool Save();
+
     }
 }

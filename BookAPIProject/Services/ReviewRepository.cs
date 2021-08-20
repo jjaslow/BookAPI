@@ -16,7 +16,7 @@ namespace BookAPIProject.Services
         }
 
 
-
+        ///////////////////////////////////
 
         public ICollection<Review> GetReviews()
         {
@@ -47,6 +47,35 @@ namespace BookAPIProject.Services
         public bool ReviewExists(int reviewId)
         {
             return _context.Reviews.Any(r => r.Id == reviewId);
+        }
+
+
+        ///////////////////////////////////
+
+
+
+        public bool CreateReview(Review review)
+        {
+            _context.Add(review);
+            return Save();
+        }
+
+        public bool UpdateReview(Review review)
+        {
+            _context.Update(review);
+            return Save();
+        }
+
+        public bool DeleteReview(Review review)
+        {
+            _context.Remove(review);
+            return Save();
+        }
+
+        public bool Save()
+        {
+            int result = _context.SaveChanges();
+            return result >= 0;
         }
     }
 }

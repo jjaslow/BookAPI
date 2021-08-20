@@ -15,6 +15,7 @@ namespace BookAPIProject.Services
             _categoryContext = bookContext;
         }
 
+        //////////////
 
 
         public ICollection<Category> GetCategories()
@@ -53,5 +54,36 @@ namespace BookAPIProject.Services
                 return existingCategory.Id != categoryId;
             }
         }
+
+
+
+
+        //////////////
+
+
+        public bool CreateCategory(Category newCategory)
+        {
+            _categoryContext.Add(newCategory);
+            return Save();
+        }
+
+        public bool UpdateCategory(Category categoryToUpdate)
+        {
+            _categoryContext.Update(categoryToUpdate);
+            return Save();
+        }
+
+        public bool DeleteCategory(Category categoryToRemove)
+        {
+            _categoryContext.Remove(categoryToRemove);
+            return Save();
+        }
+
+        public bool Save()
+        {
+            int response = _categoryContext.SaveChanges();
+            return response >= 0;
+        }
+
     }
 }
