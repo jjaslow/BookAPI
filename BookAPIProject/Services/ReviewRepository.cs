@@ -77,5 +77,13 @@ namespace BookAPIProject.Services
             int result = _context.SaveChanges();
             return result >= 0;
         }
+
+
+        //will call from the Reviewer Action, not the Reviewer Repo
+        public bool DeleteReviews(List<Review> reviews)
+        {
+            _context.RemoveRange(reviews);
+            return Save();
+        }
     }
 }

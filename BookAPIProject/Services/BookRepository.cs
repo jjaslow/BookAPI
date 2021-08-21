@@ -8,41 +8,41 @@ namespace BookAPIProject.Services
 {
     public class BookRepository : IBookRepository
     {
-        BookDbContext _dbContext;
+        BookDbContext _context;
 
         public BookRepository(BookDbContext context)
         {
-            _dbContext = context;
+            _context = context;
         }
 
 
 
         public ICollection<Book> GetBooks()
         {
-            return _dbContext.Books.OrderBy(b => b.Title).ToList();
+            return _context.Books.OrderBy(b => b.Title).ToList();
         }
 
 
 
         public Book GetBook(int bookId)
         {
-            return _dbContext.Books.FirstOrDefault(b => b.ID == bookId);
+            return _context.Books.FirstOrDefault(b => b.ID == bookId);
         }
         public Book GetBook(string Isbn)
         {
-            return _dbContext.Books.FirstOrDefault(b => b.Isbn == Isbn);
+            return _context.Books.FirstOrDefault(b => b.Isbn == Isbn);
         }
 
 
 
         public bool BookExists(int bookId)
         {
-            return _dbContext.Books.Any(b => b.ID == bookId);
+            return _context.Books.Any(b => b.ID == bookId);
         }
 
         public bool BookExists(string Isbn)
         {
-            return _dbContext.Books.Any(b => b.Isbn == Isbn);
+            return _context.Books.Any(b => b.Isbn == Isbn);
         }
 
 
@@ -50,19 +50,19 @@ namespace BookAPIProject.Services
 
         public bool IsDuplicateIsbn(int bookId, string Isbn)
         {
-            bool isbnExists = _dbContext.Books.Any(b => b.Isbn == Isbn);
+            bool isbnExists = _context.Books.Any(b => b.Isbn == Isbn);
             if (!isbnExists)
                 return false;
             else
             {
-                Book existingBook = _dbContext.Books.FirstOrDefault(b => b.Isbn.Trim().ToUpper() == Isbn.Trim().ToUpper());
+                Book existingBook = _context.Books.FirstOrDefault(b => b.Isbn.Trim().ToUpper() == Isbn.Trim().ToUpper());
                 return existingBook.ID != bookId;
             }
         }
 
         public decimal GetBookRating(int bookId)
         {
-            var reviews = _dbContext.Reviews.Where(r => r.Book.ID == bookId);
+            var reviews = _context.Reviews.Where(r => r.Book.ID == bookId);
 
             int numberOfReviews = reviews.Count();
 

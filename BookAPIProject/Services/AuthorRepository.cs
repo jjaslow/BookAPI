@@ -8,43 +8,78 @@ namespace BookAPIProject.Services
 {
     public class AuthorRepository : IAuthorRepositiory
     {
-        BookDbContext _authorContext;
+        BookDbContext _context;
 
         public AuthorRepository(BookDbContext context)
         {
-            _authorContext = context;
+            _context = context;
         }
 
 
-
+        ///////////////////////////////////
 
 
         public ICollection<Author> GetAuthors()
         {
-            return _authorContext.Authors.OrderBy(a => a.LastName).ToList();
+            return _context.Authors.OrderBy(a => a.LastName).ToList();
         }
 
         public Author GetAuthor(int authorId)
         {
-            return _authorContext.Authors.FirstOrDefault(a => a.Id == authorId);
+            return _context.Authors.FirstOrDefault(a => a.Id == authorId);
         }
 
 
         public ICollection<Author> GetAuthorsOfABook(int bookId)
         {
-            return _authorContext.BookAuthors.Where(b => b.BookId == bookId).Select(a => a.Author).ToList();
+            return _context.BookAuthors.Where(b => b.BookId == bookId).Select(a => a.Author).ToList();
         }
 
         public ICollection<Book> GetBooksByAuthor(int authorId)
         {
-            return _authorContext.BookAuthors.Where(a => a.AuthorId == authorId).Select(b => b.Book).ToList();
+            return _context.BookAuthors.Where(a => a.AuthorId == authorId).Select(b => b.Book).ToList();
         }
 
 
 
         public bool AuthorExists(int authorId)
         {
-            return _authorContext.Authors.Any(a => a.Id == authorId);
+            return _context.Authors.Any(a => a.Id == authorId);
         }
+
+
+        ///////////////////////////////////
+
+
+
+
+        public bool CreateAuthor(Author author)
+        {
+            _context.Add(author);
+            return Save();
+        }
+
+        public bool UpdateAuthor(Author author)
+        {
+            _context.Update(author);
+            return Save();
+        }
+
+        public bool DeleteAuthor(Author author)
+        {
+            _context.Remove(author);
+            return Save();
+        }
+
+        public bool Save()
+        {
+            int result = _context.SaveChanges();
+            return result >= 0;
+        }
+
+
+
+
+
     }
 }

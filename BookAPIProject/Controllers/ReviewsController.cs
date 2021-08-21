@@ -140,8 +140,8 @@ namespace BookAPIProject.Controllers
                 return StatusCode(404, ModelState);
 
             //assign book and reviewer (complete objects) from the IDs submitted
-            newReview.Book = _bookRepository.GetBook(newReview.Book.ID);
             newReview.Reviewer = _reviewerRepository.GetReviewer(newReview.Reviewer.Id);
+            newReview.Book = _bookRepository.GetBook(newReview.Book.ID);
 
             //General ModelState error
             if (!ModelState.IsValid)
@@ -239,7 +239,7 @@ namespace BookAPIProject.Controllers
             //error deleting
             if (!_reviewRepository.DeleteReview(reviewToDelete))
             {
-                ModelState.AddModelError("", $"Something went wrong deleting the review.");
+                ModelState.AddModelError("", "Something went wrong deleting the review.");
                 return StatusCode(500, ModelState);
             }
 
