@@ -18,5 +18,14 @@ namespace BookAPIProject.Services
         bool IsDuplicateIsbn(int bookId, string Isbn);
         decimal GetBookRating(int bookId);
 
+
+        ///////////////////////////////////
+
+        bool CreateBook(Book book, List<int> authorIds, List<int> categoryIds);
+        bool UpdateBook(Book book, List<int> authorIds, List<int> categoryIds);
+        bool DeleteBook(Book book);
+        bool Save();
+
+
     }
 }
